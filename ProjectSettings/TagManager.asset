@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CinemachineTarget
   - healing
+  - damage
   layers:
   - Default
   - TransparentFX

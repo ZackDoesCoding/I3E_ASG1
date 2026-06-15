@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,32 +19,33 @@ public class PlayerScript : MonoBehaviour
     {
         Debug.Log("Trigger entered with: " + other.gameObject.name + " | tag=" + other.tag);
 
-        if (other.CompareTag("healing")) 
+        if (other.CompareTag("healing"))
         {
-
-        ModifyHealth modifyHealth = other.GetComponent<ModifyHealth>();
-        if (modifyHealth == null)
-        {
-            Debug.LogWarning("Healing object is missing ModifyHealth on: " + other.gameObject.name);
-            return;
-        }
-
-        modifyHealth.Heal(this);
-        Debug.Log("Player healed. Current health: " + Health);
-
-        Destroy(other.gameObject);
-        }
-        else if (other.CompareTag("damage"))
-        {
-            ModifyHealth modifyHealth = other.GetComponent<ModifyHealth>();
-            if (modifyHealth == null)
+            Healing healing = other.GetComponent<Healing>();
+            if (healing == null)
             {
-                Debug.LogWarning("Damage object is missing ModifyHealth on: " + other.gameObject.name);
+                Debug.LogWarning("Healing object is missing Healing on: " + other.gameObject.name);
                 return;
             }
 
-            modifyHealth.DamagePlayerPeriodic(this);
-            Debug.Log("Player damaged. Current health: " + Health);
+            healing.HealPlayer(this);
+            Debug.Log("Player healed. Current health: " + Health);
+
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("damage"))
+        {
+            Damage damage = other.GetComponent<Damage>();
+            if (damage == null)
+            {
+                Debug.LogWarning("Damage object is missing Damage on: " + other.gameObject.name);
+                return;
+            }
+
+            if (damage.DamagePlayerPeriodic(this))
+            {
+                Debug.Log("Player damaged. Current health: " + Health);
+            }
         }
     }
 
@@ -53,13 +53,10 @@ public class PlayerScript : MonoBehaviour
     {
         if (!other.CompareTag("damage")) return;
 
-        ModifyHealth modifyHealth = other.GetComponent<ModifyHealth>();
-        if (modifyHealth == null) return;
+        Damage damage = other.GetComponent<Damage>();
+        if (damage == null) return;
 
-        int previousHealth = Health;
-        modifyHealth.DamagePlayerPeriodic(this);
-
-        if (Health != previousHealth)
+        if (damage.DamagePlayerPeriodic(this))
         {
             Debug.Log("Player damaged. Current health: " + Health);
         }
@@ -69,10 +66,10 @@ public class PlayerScript : MonoBehaviour
     {
         if (!other.CompareTag("damage")) return;
 
-        ModifyHealth modifyHealth = other.GetComponent<ModifyHealth>();
-        if (modifyHealth == null) return;
+        Damage damage = other.GetComponent<Damage>();
+        if (damage == null) return;
 
-        modifyHealth.ResetDamageTimer(this);
+        damage.ResetDamageTimer(this);
     }
 
     

@@ -2,15 +2,14 @@ using UnityEngine;
 
 public class Healing : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public int HealAmount = 1;
 
-    // Update is called once per frame
-    void Update()
+    public bool HealPlayer(PlayerScript playerScript)
     {
-        
+        if (playerScript == null || playerScript.Health >= playerScript.MaxHealth) return false;
+
+        int previousHealth = playerScript.Health;
+        playerScript.Health = Mathf.Min(playerScript.Health + HealAmount, playerScript.MaxHealth);
+        return playerScript.Health != previousHealth;
     }
 }
