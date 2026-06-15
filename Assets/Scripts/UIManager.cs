@@ -1,10 +1,13 @@
 using TMPro;
 using UnityEngine;
 using StarterAssets;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public TMP_Text scoreText;
+    public TMP_Text hpText;
+    public Image healthFillImage;
 
     public GameObject MenuPanel;
     public GameObject Crosshair;
@@ -25,6 +28,22 @@ public class UIManager : MonoBehaviour
     public void updateScore(int score)
     {
         scoreText.text = "Score : " + score.ToString();
+    }
+
+    public void UpdateHealthUI(int currentHealth, int maxHealth)
+    {
+        int safeMaxHealth = Mathf.Max(1, maxHealth);
+        int clampedHealth = Mathf.Clamp(currentHealth, 0, safeMaxHealth);
+
+        if (hpText != null)
+        {
+            hpText.text = "HP " + clampedHealth + "/" + safeMaxHealth;
+        }
+
+        if (healthFillImage != null)
+        {
+            healthFillImage.fillAmount = (float)clampedHealth / safeMaxHealth;
+        }
     }
 
     public void toggleMenu()

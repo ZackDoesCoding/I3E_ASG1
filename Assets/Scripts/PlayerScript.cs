@@ -7,6 +7,12 @@ public class PlayerScript : MonoBehaviour
     public int Health = 5;
     public int MaxHealth = 10;
 
+    private void Start()
+    {
+        Health = Mathf.Clamp(Health, 0, MaxHealth);
+        RefreshHealthUI();
+    }
+
     private void OnMenu(InputValue value)
     {
         if (!value.isPressed) return;
@@ -28,8 +34,11 @@ public class PlayerScript : MonoBehaviour
                 return;
             }
 
-            healing.HealPlayer(this);
-            Debug.Log("Player healed. Current health: " + Health);
+            if (healing.HealPlayer(this))
+            {
+                RefreshHealthUI();
+                Debug.Log("Player healed. Current health: " + Health);
+            }
 
             Destroy(other.gameObject);
         }
@@ -44,6 +53,7 @@ public class PlayerScript : MonoBehaviour
 
             if (damage.DamagePlayerPeriodic(this))
             {
+                RefreshHealthUI();
                 Debug.Log("Player damaged. Current health: " + Health);
             }
         }
@@ -58,19 +68,16 @@ public class PlayerScript : MonoBehaviour
 
         if (damage.DamagePlayerPeriodic(this))
         {
+            RefreshHealthUI();
             Debug.Log("Player damaged. Current health: " + Health);
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    public void RefreshHealthUI()
     {
-        if (!other.CompareTag("damage")) return;
+        if (uiManager == null) return;
 
-        Damage damage = other.GetComponent<Damage>();
-        if (damage == null) return;
-
-        damage.ResetDamageTimer(this);
+        uiManager.UpdateHealthUI(Health, MaxHealth);
     }
 
-    
 }
