@@ -120,7 +120,6 @@ public class AdminPanel : MonoBehaviour
         if (!TryGetInputValue(out int maxHealthValue)) return;
 
         playerScript.SetMaxHealth(maxHealthValue);
-        ReturnToMenuAndRefreshInput();
     }
 
     public void HealToMax()

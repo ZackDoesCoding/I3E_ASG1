@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Healing : MonoBehaviour
 {
-    public int HealAmount = 1;
+    public int HealAmount = 10;
 
     public bool HealPlayer(PlayerScript playerScript)
     {

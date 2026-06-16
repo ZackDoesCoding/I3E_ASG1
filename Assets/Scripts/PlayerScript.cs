@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
     public UIManager uiManager;
-    public int Health = 5;
-    public int MaxHealth = 10;
+    public int Health = 100;
+    public int MaxHealth = 100;
 
     private void Start()
     {
