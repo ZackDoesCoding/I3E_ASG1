@@ -7,26 +7,12 @@ public class Damage : MonoBehaviour
     public float DamageIntervalSeconds = 1f;
 
     private readonly Dictionary<int, float> nextDamageTimeByPlayer = new Dictionary<int, float>();
-    private UIManager uiManager;
 
     public bool DamagePlayer(PlayerScript playerScript)
     {
-        if (playerScript == null || playerScript.Health <= 0) return false;
+        if (playerScript == null) return false;
 
-        int previousHealth = playerScript.Health;
-        playerScript.Health = Mathf.Max(playerScript.Health - DamageAmount, 0);
-
-        if (playerScript.Health <= 0)
-        {
-            Debug.Log("Player died.");
-            uiManager = FindFirstObjectByType<UIManager>();
-            if (uiManager != null)
-            {
-                uiManager.toggleGameoverScreen(true);
-            }
-        }
-
-        return playerScript.Health != previousHealth;
+        return playerScript.ChangeHealth(-DamageAmount);
     }
 
     public bool DamagePlayerPeriodic(PlayerScript playerScript)
@@ -42,6 +28,9 @@ public class Damage : MonoBehaviour
         }
 
         bool didDamage = DamagePlayer(playerScript);
+
+        if (!didDamage) return false;
+
         float safeInterval = Mathf.Max(0.01f, DamageIntervalSeconds);
         nextDamageTimeByPlayer[playerId] = now + safeInterval;
 

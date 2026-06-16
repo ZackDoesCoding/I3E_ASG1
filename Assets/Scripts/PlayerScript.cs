@@ -9,8 +9,7 @@ public class PlayerScript : MonoBehaviour
 
     private void Start()
     {
-        Health = Mathf.Clamp(Health, 0, MaxHealth);
-        RefreshHealthUI();
+        SetHealth(Health);
     }
 
     private void OnMenu(InputValue value)
@@ -36,7 +35,6 @@ public class PlayerScript : MonoBehaviour
 
             if (healing.HealPlayer(this))
             {
-                RefreshHealthUI();
                 Debug.Log("Player healed. Current health: " + Health);
             }
 
@@ -53,7 +51,6 @@ public class PlayerScript : MonoBehaviour
 
             if (damage.DamagePlayerPeriodic(this))
             {
-                RefreshHealthUI();
                 Debug.Log("Player damaged. Current health: " + Health);
             }
         }
@@ -68,16 +65,75 @@ public class PlayerScript : MonoBehaviour
 
         if (damage.DamagePlayerPeriodic(this))
         {
-            RefreshHealthUI();
             Debug.Log("Player damaged. Current health: " + Health);
         }
     }
 
     public void RefreshHealthUI()
     {
+        if (uiManager == null)
+        {
+            uiManager = FindFirstObjectByType<UIManager>();
+        }
+
         if (uiManager == null) return;
 
         uiManager.UpdateHealthUI(Health, MaxHealth);
+    }
+
+    public bool SetHealth(int newHealth)
+    {
+        int safeMaxHealth = Mathf.Max(1, MaxHealth);
+        int clampedHealth = Mathf.Clamp(newHealth, 0, safeMaxHealth);
+        bool didReachZero = Health > 0 && clampedHealth <= 0;
+        bool didChange = Health != clampedHealth;
+
+        Health = clampedHealth;
+        RefreshHealthUI();
+        UpdateGameoverState();
+
+        if (didReachZero)
+        {
+            Debug.Log("Player died.");
+        }
+
+        return didChange;
+    }
+
+    public bool SetMaxHealth(int newMaxHealth)
+    {
+        int safeMaxHealth = Mathf.Max(1, newMaxHealth);
+        bool didChange = MaxHealth != safeMaxHealth;
+
+        MaxHealth = safeMaxHealth;
+
+        if (Health > MaxHealth)
+        {
+            Health = MaxHealth;
+            didChange = true;
+        }
+
+        RefreshHealthUI();
+        UpdateGameoverState();
+
+        return didChange;
+    }
+
+    public bool ChangeHealth(int delta)
+    {
+        return SetHealth(Health + delta);
+    }
+
+    private void UpdateGameoverState()
+    {
+        if (uiManager == null)
+        {
+            uiManager = FindFirstObjectByType<UIManager>();
+        }
+
+        if (uiManager == null) return;
+
+        uiManager.toggleGameoverScreen(Health <= 0);
     }
 
 }

@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     public Image healthFillImage;
 
     public GameObject MenuPanel;
+    public GameObject AdminPanel;
     public GameObject Crosshair;
     public GameObject GameoverScreen;
     public StarterAssetsInputs starterInputs;
@@ -21,8 +22,39 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        ApplyInputAndCursorState();
+    }
+
+    private void ApplyInputAndCursorState()
+    {
+        bool isGameoverOpen = GameoverScreen != null && GameoverScreen.activeSelf;
+        bool isMenuOpen = MenuPanel != null && MenuPanel.activeSelf;
+        bool isAdminOpen = AdminPanel != null && AdminPanel.activeSelf;
+        bool shouldShowCursor = isGameoverOpen || isMenuOpen || isAdminOpen;
+
+        if (Crosshair != null)
+        {
+            Crosshair.SetActive(!shouldShowCursor);
+        }
+
+        Cursor.visible = shouldShowCursor;
+        Cursor.lockState = shouldShowCursor ? CursorLockMode.None : CursorLockMode.Locked;
+
+        if (starterInputs != null)
+        {
+            starterInputs.cursorLocked = !shouldShowCursor;
+            starterInputs.cursorInputForLook = !shouldShowCursor;
+
+            if (shouldShowCursor)
+            {
+                starterInputs.LookInput(Vector2.zero);
+            }
+        }
+    }
+
+    public void RefreshUIState()
+    {
+        ApplyInputAndCursorState();
     }
 
     public void updateScore(int score)
@@ -52,20 +84,43 @@ public class UIManager : MonoBehaviour
 
         bool isMenuOpen = !MenuPanel.activeSelf;
         MenuPanel.SetActive(isMenuOpen);
-        Crosshair.SetActive(!isMenuOpen);
-        Cursor.visible = isMenuOpen;
-        Cursor.lockState = isMenuOpen ? CursorLockMode.None : CursorLockMode.Locked;
+        ApplyInputAndCursorState();
+    }
 
-        if (starterInputs != null)
+    public void toggleAdminPanel()
+    {
+        if (AdminPanel == null) return;
+
+        bool isAdminPanelOpen = !AdminPanel.activeSelf;
+        AdminPanel.SetActive(isAdminPanelOpen);
+        if (MenuPanel != null)
         {
-            starterInputs.cursorLocked = !isMenuOpen;
-            starterInputs.cursorInputForLook = !isMenuOpen;
+            MenuPanel.SetActive(!isAdminPanelOpen);
+        }
 
-            if (isMenuOpen)
+        ApplyInputAndCursorState();
+
+    }
+
+    public void ReturnToMenu(params GameObject[] panelsToClose)
+    {
+        if (panelsToClose != null)
+        {
+            foreach (GameObject panel in panelsToClose)
             {
-                starterInputs.LookInput(Vector2.zero);
+                if (panel != null)
+                {
+                    panel.SetActive(false);
+                }
             }
         }
+
+        if (MenuPanel != null)
+        {
+            MenuPanel.SetActive(true);
+        }
+
+        ApplyInputAndCursorState();
     }
 
     public void toggleGameoverScreen(bool isGameover)
@@ -73,20 +128,7 @@ public class UIManager : MonoBehaviour
         if (GameoverScreen == null) return;
 
         GameoverScreen.SetActive(isGameover);
-        Crosshair.SetActive(!isGameover);
-        Cursor.visible = isGameover;
-        Cursor.lockState = isGameover ? CursorLockMode.None : CursorLockMode.Locked;
-
-        if (starterInputs != null)
-        {
-            starterInputs.cursorLocked = !isGameover;
-            starterInputs.cursorInputForLook = !isGameover;
-
-            if (isGameover)
-            {
-                starterInputs.LookInput(Vector2.zero);
-            }
-        }
+        ApplyInputAndCursorState();
     }
 
     public void restartGame()

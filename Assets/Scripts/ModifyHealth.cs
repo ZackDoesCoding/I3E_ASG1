@@ -1,66 +1,161 @@
+using TMPro;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class ModifyHealth : MonoBehaviour
 {
-    public int Damage = 1;
-    public int HealAmount = 1;
-    public float DamageIntervalSeconds = 1f;
+    public PlayerScript playerScript;
+    public UIManager uiManager;
+    public TMP_InputField healthInputField;
 
-    private readonly Dictionary<int, float> nextDamageTimeByPlayer = new Dictionary<int, float>();
-    UIManager uiManager;
-
-    public void Heal(PlayerScript playerScript)
+    private void Awake()
     {
-        if (playerScript == null || playerScript.Health >= playerScript.MaxHealth) return;
-
-        playerScript.Health = Mathf.Min(playerScript.Health + HealAmount, playerScript.MaxHealth);
-    }
-
-    public void DamagePlayer(PlayerScript playerScript)
-    {
-        if (playerScript == null || playerScript.Health <= 0) return;
-
-        playerScript.Health = Mathf.Max(playerScript.Health - Damage, 0);
-
-        if (playerScript.Health <= 0)
+        if (playerScript == null)
         {
-            Debug.Log("Player died.");
+            playerScript = FindFirstObjectByType<PlayerScript>();
+        }
+
+        if (uiManager == null)
+        {
             uiManager = FindFirstObjectByType<UIManager>();
-            if (uiManager != null)
-            {
-                uiManager.toggleGameoverScreen(true);
-            }
+        }
+
+        SyncInputWithCurrentMaxHealth();
+    }
+
+    private void OnEnable()
+    {
+        SyncInputWithCurrentMaxHealth();
+    }
+
+    private bool TryGetPlayer()
+    {
+        if (playerScript == null)
+        {
+            playerScript = FindFirstObjectByType<PlayerScript>();
+        }
+
+        return playerScript != null;
+    }
+
+    private bool TryGetUIManager()
+    {
+        if (uiManager == null)
+        {
+            uiManager = FindFirstObjectByType<UIManager>();
+        }
+
+        return uiManager != null;
+    }
+
+    private bool TryGetInputValue(out int value)
+    {
+        value = 0;
+
+        if (healthInputField == null) return false;
+
+        if (string.IsNullOrWhiteSpace(healthInputField.text))
+        {
+            if (!TryGetPlayer()) return false;
+
+            value = playerScript.MaxHealth;
+            return true;
+        }
+
+        return int.TryParse(healthInputField.text, out value);
+    }
+
+    private void ReturnToMenuAndRefreshInput()
+    {
+        ReturnToNormalMenu();
+
+        SyncInputWithCurrentMaxHealth();
+    }
+
+    public void OpenAdminPanel()
+    {
+        if (!TryGetUIManager()) return;
+
+        if (uiManager.AdminPanel != null)
+        {
+            uiManager.AdminPanel.SetActive(true);
+        }
+
+        if (uiManager.MenuPanel != null)
+        {
+            uiManager.MenuPanel.SetActive(false);
+        }
+
+        SyncInputWithCurrentMaxHealth();
+        uiManager.RefreshUIState();
+    }
+
+    public void ReturnToNormalMenu()
+    {
+        if (!TryGetUIManager()) return;
+
+        if (uiManager.AdminPanel != null)
+        {
+            uiManager.AdminPanel.SetActive(false);
+        }
+
+        if (uiManager.MenuPanel != null)
+        {
+            uiManager.MenuPanel.SetActive(true);
+        }
+
+        uiManager.RefreshUIState();
+    }
+
+    public void ToggleAdminPanel()
+    {
+        if (!TryGetUIManager()) return;
+
+        bool openAdminPanel = uiManager.AdminPanel != null && !uiManager.AdminPanel.activeSelf;
+
+        if (openAdminPanel)
+        {
+            OpenAdminPanel();
+        }
+        else
+        {
+            ReturnToNormalMenu();
         }
     }
 
-    public void DamagePlayerPeriodic(PlayerScript playerScript)
+    public void SyncInputWithCurrentMaxHealth()
     {
-        if (playerScript == null || playerScript.Health <= 0) return;
+        if (healthInputField == null) return;
+        if (!TryGetPlayer()) return;
 
-        int playerId = playerScript.GetInstanceID();
-        float now = Time.time;
-
-        if (nextDamageTimeByPlayer.TryGetValue(playerId, out float nextDamageTime) && now < nextDamageTime)
-        {
-            return;
-        }
-
-        DamagePlayer(playerScript);
-
-        float safeInterval = Mathf.Max(0.01f, DamageIntervalSeconds);
-        nextDamageTimeByPlayer[playerId] = now + safeInterval;
+        healthInputField.text = playerScript.MaxHealth.ToString();
     }
 
-    public void ResetDamageTimer(PlayerScript playerScript)
+    public void ModifyHealthFromInput()
     {
-        if (playerScript == null) return;
+        if (!TryGetPlayer()) return;
+        if (!TryGetInputValue(out int maxHealthValue)) return;
 
-        int playerId = playerScript.GetInstanceID();
-        if (nextDamageTimeByPlayer.ContainsKey(playerId))
-        {
-            nextDamageTimeByPlayer.Remove(playerId);
-        }
+        playerScript.SetMaxHealth(maxHealthValue);
+        ReturnToMenuAndRefreshInput();
+    }
+
+    public void HealToMax()
+    {
+        if (!TryGetPlayer()) return;
+
+        playerScript.SetHealth(playerScript.MaxHealth);
+    }
+
+    public void KillPlayer()
+    {
+        if (!TryGetPlayer()) return;
+
+        playerScript.SetHealth(0);
+    }
+
+    public void ExitAdminPanel()
+    {
+        ReturnToMenuAndRefreshInput();
     }
 
 }
