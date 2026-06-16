@@ -57,7 +57,7 @@ public class UIManager : MonoBehaviour
         ApplyInputAndCursorState();
     }
 
-    public void updateScore(int score)
+    public void UpdateScore(int score)
     {
         scoreText.text = "Score : " + score.ToString();
     }
@@ -78,7 +78,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void toggleMenu()
+    public void ToggleMenu()
     {
         if (MenuPanel == null) return;
 
@@ -87,43 +87,7 @@ public class UIManager : MonoBehaviour
         ApplyInputAndCursorState();
     }
 
-    public void toggleAdminPanel()
-    {
-        if (AdminPanel == null) return;
-
-        bool isAdminPanelOpen = !AdminPanel.activeSelf;
-        AdminPanel.SetActive(isAdminPanelOpen);
-        if (MenuPanel != null)
-        {
-            MenuPanel.SetActive(!isAdminPanelOpen);
-        }
-
-        ApplyInputAndCursorState();
-
-    }
-
-    public void ReturnToMenu(params GameObject[] panelsToClose)
-    {
-        if (panelsToClose != null)
-        {
-            foreach (GameObject panel in panelsToClose)
-            {
-                if (panel != null)
-                {
-                    panel.SetActive(false);
-                }
-            }
-        }
-
-        if (MenuPanel != null)
-        {
-            MenuPanel.SetActive(true);
-        }
-
-        ApplyInputAndCursorState();
-    }
-
-    public void toggleGameoverScreen(bool isGameover)
+    public void ToggleGameoverScreen(bool isGameover)
     {
         if (GameoverScreen == null) return;
 
@@ -131,7 +95,7 @@ public class UIManager : MonoBehaviour
         ApplyInputAndCursorState();
     }
 
-    public void restartGame()
+    public void RestartGame()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }

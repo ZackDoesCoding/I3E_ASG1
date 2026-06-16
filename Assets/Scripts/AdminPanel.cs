@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class ModifyHealth : MonoBehaviour
+public class AdminPanel : MonoBehaviour
 {
     public PlayerScript playerScript;
     public UIManager uiManager;
@@ -106,22 +106,6 @@ public class ModifyHealth : MonoBehaviour
         uiManager.RefreshUIState();
     }
 
-    public void ToggleAdminPanel()
-    {
-        if (!TryGetUIManager()) return;
-
-        bool openAdminPanel = uiManager.AdminPanel != null && !uiManager.AdminPanel.activeSelf;
-
-        if (openAdminPanel)
-        {
-            OpenAdminPanel();
-        }
-        else
-        {
-            ReturnToNormalMenu();
-        }
-    }
-
     public void SyncInputWithCurrentMaxHealth()
     {
         if (healthInputField == null) return;
@@ -130,7 +114,7 @@ public class ModifyHealth : MonoBehaviour
         healthInputField.text = playerScript.MaxHealth.ToString();
     }
 
-    public void ModifyHealthFromInput()
+    public void ConfirmMaxHealthFromInput()
     {
         if (!TryGetPlayer()) return;
         if (!TryGetInputValue(out int maxHealthValue)) return;

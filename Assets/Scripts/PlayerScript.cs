@@ -17,7 +17,7 @@ public class PlayerScript : MonoBehaviour
         if (!value.isPressed) return;
         if (uiManager == null) return;
 
-        uiManager.toggleMenu();
+        uiManager.ToggleMenu();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -133,7 +133,7 @@ public class PlayerScript : MonoBehaviour
 
         if (uiManager == null) return;
 
-        uiManager.toggleGameoverScreen(Health <= 0);
+        uiManager.ToggleGameoverScreen(Health <= 0);
     }
 
 }
