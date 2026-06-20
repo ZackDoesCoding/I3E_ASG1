@@ -69,7 +69,7 @@ public class UIManager : MonoBehaviour
 
         if (hpText != null)
         {
-            hpText.text = "HP " + clampedHealth + "/" + safeMaxHealth;
+            hpText.text = clampedHealth + "/" + safeMaxHealth;
         }
 
         if (healthFillImage != null)

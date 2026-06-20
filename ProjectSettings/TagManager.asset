@@ -7,6 +7,8 @@ TagManager:
   - CinemachineTarget
   - healing
   - damage
+  - door
+  - battery
   layers:
   - Default
   - TransparentFX

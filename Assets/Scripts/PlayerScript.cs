@@ -7,8 +7,16 @@ public class PlayerScript : MonoBehaviour
     public int Health = 100;
     public int MaxHealth = 100;
 
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private float interactDistance = 10f;
+
     private void Start()
     {
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main;
+        }
+
         SetHealth(Health);
     }
 
@@ -18,6 +26,33 @@ public class PlayerScript : MonoBehaviour
         if (uiManager == null) return;
 
         uiManager.ToggleMenu();
+    }
+
+    private void OnInteract(InputValue value)
+    {
+        if (!value.isPressed) return;
+        TryInteract();
+    }
+
+    private void TryInteract()
+    {
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main;
+        }
+
+        if (playerCamera == null) return;
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance)) return;
+
+        if (!hit.collider.CompareTag("door")) return;
+
+        DoorInteractable door = hit.collider.GetComponentInParent<DoorInteractable>();
+        if (door == null) return;
+
+        door.ToggleDoor();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -53,6 +88,10 @@ public class PlayerScript : MonoBehaviour
             {
                 Debug.Log("Player damaged. Current health: " + Health);
             }
+        }
+        else if (other.CompareTag("battery"))
+        {
+            Debug.Log("Battery collected.");
         }
     }
 
