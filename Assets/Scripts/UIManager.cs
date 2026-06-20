@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public TMP_Text scoreText;
-    public TMP_Text hpText;
-    public Image healthFillImage;
+    public TMP_Text HpText;
+    public TMP_Text BatteryText;
+    private int currentBattery = 0;
+    public Image HealthFillImage;
 
     public GameObject MenuPanel;
     public GameObject AdminPanel;
@@ -57,9 +58,13 @@ public class UIManager : MonoBehaviour
         ApplyInputAndCursorState();
     }
 
-    public void UpdateScore(int score)
+    public void UpdateBattery(int battery)
     {
-        scoreText.text = "Score : " + score.ToString();
+        currentBattery += battery;
+        if (BatteryText != null)
+        {
+            BatteryText.text = "Battery Collected : " + currentBattery.ToString();
+        }
     }
 
     public void UpdateHealthUI(int currentHealth, int maxHealth)
@@ -67,14 +72,14 @@ public class UIManager : MonoBehaviour
         int safeMaxHealth = Mathf.Max(1, maxHealth);
         int clampedHealth = Mathf.Clamp(currentHealth, 0, safeMaxHealth);
 
-        if (hpText != null)
+        if (HpText != null)
         {
-            hpText.text = clampedHealth + "/" + safeMaxHealth;
+            HpText.text = clampedHealth + "/" + safeMaxHealth;
         }
 
-        if (healthFillImage != null)
+        if (HealthFillImage != null)
         {
-            healthFillImage.fillAmount = (float)clampedHealth / safeMaxHealth;
+            HealthFillImage.fillAmount = (float)clampedHealth / safeMaxHealth;
         }
     }
 

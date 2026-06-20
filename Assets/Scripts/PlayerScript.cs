@@ -92,6 +92,8 @@ public class PlayerScript : MonoBehaviour
         else if (other.CompareTag("battery"))
         {
             Debug.Log("Battery collected.");
+            uiManager.UpdateBattery(1);
+            Destroy(other.gameObject);
         }
     }
 
