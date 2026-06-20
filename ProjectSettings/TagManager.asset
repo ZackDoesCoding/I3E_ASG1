@@ -9,6 +9,7 @@ TagManager:
   - damage
   - door
   - battery
+  - lever
   layers:
   - Default
   - TransparentFX

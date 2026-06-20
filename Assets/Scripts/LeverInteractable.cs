@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class DoorInteractable : MonoBehaviour, IInteractable
+public class LeverInteractable : MonoBehaviour, IInteractable
 {
     public Animator animator;
 
-    private bool isOpen;
+    private bool On;
 
     private void Awake()
     {
@@ -18,41 +18,41 @@ public class DoorInteractable : MonoBehaviour, IInteractable
             return;
         }
 
-        animator.SetBool("IsOpen", isOpen);
+        animator.SetBool("On", On);
     }
 
     public void Interact(PlayerScript player)
     {
-        ToggleDoor();
+        ToggleLever();
     }
 
-    public void OpenDoor()
+    public void TurnOn()
     {
-        if (isOpen) return;
+        if (On) return;
 
         if (animator == null) return;
 
-        isOpen = true;
-        animator.SetBool("IsOpen", true);
+        On = true;
+        animator.SetBool("On", true);
     }
 
-    public void CloseDoor()
+    public void TurnOff()
     {
-        if (!isOpen) return;
+        if (!On) return;
 
         if (animator == null) return;
 
-        isOpen = false;
-        animator.SetBool("IsOpen", false);
+        On = false;
+        animator.SetBool("On", false);
     }
 
-    public void ToggleDoor()
+    public void ToggleLever()
     {
-        if (isOpen)
+        if (On)
         {
-            CloseDoor();
+            TurnOff();
             return;
         }
-        OpenDoor();
+        TurnOn();
     }
 }
