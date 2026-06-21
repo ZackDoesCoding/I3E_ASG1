@@ -11,6 +11,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private float interactDistance = 3f;
     public UIManager uiManager;
+    public UIMessage uiMessage;
     private PlayerScript playerScript;
 
     private void Awake()
@@ -56,6 +57,7 @@ public class PlayerInteract : MonoBehaviour
             playerScript.Screwdriver = true;
             Destroy(hitObject);
             uiManager.ToggleScrewdriverIcon();
+            uiMessage.ShowScrewdriverMessage();
             return true;
         }
 
@@ -64,6 +66,7 @@ public class PlayerInteract : MonoBehaviour
             playerScript.GasMask = true;
             Destroy(hitObject);
             uiManager.ToggleGasmaskIcon();
+            uiMessage.ShowGasmaskMessage();
             return true;
         }
 
