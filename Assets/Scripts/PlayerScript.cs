@@ -6,6 +6,8 @@ public class PlayerScript : MonoBehaviour
     public UIManager uiManager;
     public int Health = 100;
     public int MaxHealth = 100;
+    public bool Screwdriver = false;
+    public bool GasMask = false;
 
     private void Awake()
     {

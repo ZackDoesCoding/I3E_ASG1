@@ -10,6 +10,8 @@ TagManager:
   - door
   - battery
   - lever
+  - screwdriver
+  - gasmask
   layers:
   - Default
   - TransparentFX

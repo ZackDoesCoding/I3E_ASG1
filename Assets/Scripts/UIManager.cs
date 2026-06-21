@@ -9,12 +9,14 @@ public class UIManager : MonoBehaviour
     public TMP_Text BatteryText;
     private int currentBattery = 0;
     public Image HealthFillImage;
-
     public GameObject MenuPanel;
     public GameObject AdminPanel;
     public GameObject Crosshair;
     public GameObject GameoverScreen;
+    public GameObject GasmaskIcon;
+    public GameObject ScrewdriverIcon;
     public StarterAssetsInputs starterInputs;
+    public UIMessage uiMessage;
 
     private void Awake()
     {
@@ -90,6 +92,20 @@ public class UIManager : MonoBehaviour
         bool isMenuOpen = !MenuPanel.activeSelf;
         MenuPanel.SetActive(isMenuOpen);
         ApplyInputAndCursorState();
+    }
+    public void ToggleScrewdriverIcon()
+    {
+        if (ScrewdriverIcon == null) return;
+
+        bool isIconActive = !ScrewdriverIcon.activeSelf;
+        ScrewdriverIcon.SetActive(isIconActive);
+    }
+    public void ToggleGasmaskIcon()
+    {
+        if (GasmaskIcon == null) return;
+
+        bool isIconActive = !GasmaskIcon.activeSelf;
+        GasmaskIcon.SetActive(isIconActive);
     }
 
     public void ToggleGameoverScreen(bool isGameover)
