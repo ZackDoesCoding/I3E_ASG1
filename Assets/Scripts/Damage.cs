@@ -24,7 +24,6 @@ public class Damage : MonoBehaviour
         {
             return 0;
         }
-
         switch (Mode)
         {
             case DamageMode.InstantKill:

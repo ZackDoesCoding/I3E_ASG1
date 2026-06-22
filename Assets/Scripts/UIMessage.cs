@@ -9,6 +9,8 @@ public class UIMessage : MonoBehaviour
     public GameObject ScrewdriverRequiredMessage;
     public GameObject GasmaskMessage;
     public GameObject ScrewdriverMessage;
+    public GameObject DoorLeverMessage1;
+    public GameObject DoorLeverMessage2;
     public float messageDuration = 3f;
 
     // Coroutine to handle message display timing
@@ -19,15 +21,31 @@ public class UIMessage : MonoBehaviour
         if (ScrewdriverRequiredMessage != null) ScrewdriverRequiredMessage.SetActive(false);
         if (GasmaskMessage != null) GasmaskMessage.SetActive(false);
         if (ScrewdriverMessage != null) ScrewdriverMessage.SetActive(false);
+        if (DoorLeverMessage1 != null) DoorLeverMessage1.SetActive(false);
+        if (DoorLeverMessage2 != null) DoorLeverMessage2.SetActive(false);
     }
 
-    private void ShowMessage(GameObject messageToShow)
+    private void ShowMessages(params GameObject[] messagesToShow)
     {
-        if (MessagePanel == null || messageToShow == null) return;
+        if (MessagePanel == null || messagesToShow == null || messagesToShow.Length == 0) return;
 
         HideAllMessages();
         MessagePanel.SetActive(true);
-        messageToShow.SetActive(true);
+
+        bool hasAnyMessage = false;
+        foreach (GameObject message in messagesToShow)
+        {
+            if (message == null) continue;
+
+            message.SetActive(true);
+            hasAnyMessage = true;
+        }
+
+        if (!hasAnyMessage)
+        {
+            MessagePanel.SetActive(false);
+            return;
+        }
 
         if (hideCoroutine != null)
         {
@@ -52,17 +70,22 @@ public class UIMessage : MonoBehaviour
 
     public void ShowScrewdriverRequiredMessage()
     {
-        ShowMessage(ScrewdriverRequiredMessage);
+        ShowMessages(ScrewdriverRequiredMessage);
     }
 
     public void ShowGasmaskMessage()
     {
-        ShowMessage(GasmaskMessage);
+        ShowMessages(GasmaskMessage);
     }
 
     public void ShowScrewdriverMessage()
     {
-        ShowMessage(ScrewdriverMessage);
+        ShowMessages(ScrewdriverMessage);
+    }
+
+    public void ShowDoorLeverMessage()
+    {
+        ShowMessages(DoorLeverMessage1, DoorLeverMessage2);
     }
 
 }

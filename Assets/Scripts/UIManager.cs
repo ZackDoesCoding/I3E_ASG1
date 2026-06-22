@@ -7,7 +7,7 @@ public class UIManager : MonoBehaviour
 {
     public TMP_Text HpText;
     public TMP_Text BatteryText;
-    private int currentBattery = 0;
+    public int currentBattery = 0;
     public Image HealthFillImage;
     public GameObject MenuPanel;
     public GameObject AdminPanel;

@@ -4,7 +4,7 @@ public class ScewInteractable : MonoBehaviour, IInteractable
 {
     public Animator animator;
     public UIMessage uiMessage;
-    private bool UnScrewed;
+    public bool UnScrewed;
 
     private void Awake()
     {

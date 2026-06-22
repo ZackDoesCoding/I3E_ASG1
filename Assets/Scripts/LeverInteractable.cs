@@ -2,9 +2,16 @@ using UnityEngine;
 
 public class LeverInteractable : MonoBehaviour, IInteractable
 {
-    public Animator animator;
+    public enum LeverType
+    {
+        Red,
+        Blue
+    }
 
-    private bool On;
+    public Animator animator;
+    public DoorInteractable linkedDoor;
+    public LeverType leverType = LeverType.Red;
+    public bool On;
 
     private void Awake()
     {
@@ -13,12 +20,12 @@ public class LeverInteractable : MonoBehaviour, IInteractable
             animator = GetComponentInChildren<Animator>();
         }
 
-        if (animator == null)
+        if (animator != null)
         {
-            return;
+            animator.SetBool("On", On);
         }
 
-        animator.SetBool("On", On);
+        NotifyDoor();
     }
 
     public void Interact(PlayerScript player)
@@ -30,20 +37,28 @@ public class LeverInteractable : MonoBehaviour, IInteractable
     {
         if (On) return;
 
-        if (animator == null) return;
-
         On = true;
-        animator.SetBool("On", true);
+
+        if (animator != null)
+        {
+            animator.SetBool("On", true);
+        }
+
+        NotifyDoor();
     }
 
     public void TurnOff()
     {
         if (!On) return;
 
-        if (animator == null) return;
-
         On = false;
-        animator.SetBool("On", false);
+
+        if (animator != null)
+        {
+            animator.SetBool("On", false);
+        }
+
+        NotifyDoor();
     }
 
     public void ToggleLever()
@@ -54,5 +69,16 @@ public class LeverInteractable : MonoBehaviour, IInteractable
             return;
         }
         TurnOn();
+    }
+
+    private void NotifyDoor()
+    {
+        if (linkedDoor == null)
+        {
+            return;
+        }
+
+        bool isRedLever = leverType == LeverType.Red;
+        linkedDoor.SetLeverState(isRedLever, On);
     }
 }
