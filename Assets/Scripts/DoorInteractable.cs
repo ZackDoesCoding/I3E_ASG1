@@ -15,11 +15,30 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     public bool LeverBlue = false;
     public UIManager uiManager;
     public UIMessage uiMessage;
+    public AudioSource doorAudioSource;
+    public AudioClip manualDoorClip;
+    public AudioClip leverDoorClip;
+    public AudioClip generatorDoorClip;
+    private BoxCollider triggerBox;
+    private bool hasAwardedDoorScore;
+
     private void Awake()
     {
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
+        }
+
+        if (doorAudioSource == null)
+        {
+            doorAudioSource = GetComponent<AudioSource>();
+        }
+
+        // Get the BoxCollider and set it as trigger
+        triggerBox = GetComponent<BoxCollider>();
+        if (triggerBox != null)
+        {
+            triggerBox.isTrigger = true;
         }
 
         if (animator == null)
@@ -70,6 +89,22 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         {
             animator.SetBool("IsOpen", true);
         }
+
+        if (!hasAwardedDoorScore)
+        {
+            if (uiManager == null)
+            {
+                uiManager = FindFirstObjectByType<UIManager>();
+            }
+
+            if (uiManager != null)
+            {
+                uiManager.RegisterInteraction();
+                hasAwardedDoorScore = true;
+            }
+        }
+
+        PlayDoorAudio();
     }
 
     public void CloseDoor()
@@ -82,6 +117,8 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         {
             animator.SetBool("IsOpen", false);
         }
+
+        PlayDoorAudio();
     }
 
     public void ToggleDoor()
@@ -137,6 +174,64 @@ public class DoorInteractable : MonoBehaviour, IInteractable
         if (uiMessage != null)
         {
             uiMessage.ShowDoorLeverMessage();
+        }
+    }
+
+    private void PlayDoorAudio()
+    {
+        if (doorAudioSource == null)
+        {
+            return;
+        }
+
+        AudioClip selectedClip = null;
+        switch (doorState)
+        {
+            case DoorState.Manual:
+                selectedClip = manualDoorClip;
+                break;
+            case DoorState.Lever:
+                selectedClip = leverDoorClip;
+                break;
+            case DoorState.Generator:
+                selectedClip = generatorDoorClip;
+                break;
+        }
+
+        if (selectedClip != null)
+        {
+            doorAudioSource.PlayOneShot(selectedClip);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Only auto-open generator doors
+        if (doorState != DoorState.Generator)
+        {
+            return;
+        }
+
+        // Check if the player entered and has enough batteries
+        if ((other.CompareTag("Player") || other.GetComponent<PlayerScript>() != null) &&
+            uiManager != null && uiManager.currentBattery >= 5)
+        {
+            OpenDoor();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        // Only auto-close generator doors
+        if (doorState != DoorState.Generator)
+        {
+            return;
+        }
+
+        // Check if the player left the trigger
+        if (other.CompareTag("Player") || other.GetComponent<PlayerScript>() != null)
+        {
+            CloseDoor();
         }
     }
 }

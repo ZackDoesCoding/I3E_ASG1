@@ -1,2 +1,18 @@
 fileFormatVersion: 2
 guid: eadef2b45464aa4428b1a6d25dee5546
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - animator: {instanceID: 0}
+  - uiManager: {instanceID: 0}
+  - uiMessage: {instanceID: 0}
+  - doorAudioSource: {instanceID: 0}
+  - manualDoorClip: {fileID: 8300000, guid: c21fd3b60a3ec3e40a1912c0ccfd5d66, type: 3}
+  - leverDoorClip: {fileID: 8300000, guid: 01bc11b37ec61ba4cbeb52ba689c724a, type: 3}
+  - generatorDoorClip: {fileID: 8300000, guid: cb25803d81d6109478edea34482448fc, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

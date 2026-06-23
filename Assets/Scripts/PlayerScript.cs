@@ -4,10 +4,17 @@ using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
     public UIManager uiManager;
+    public AudioSource pickupAudioSource;
+    public AudioClip pickupAudioClip;
     public int Health = 100;
     public int MaxHealth = 100;
     public bool Screwdriver = false;
     public bool GasMask = false;
+    public int Deaths = 0;
+    private bool hasReachedExit = false;
+
+    private Vector3 spawnPosition;
+    private Quaternion spawnRotation;
 
     private void Awake()
     {
@@ -19,6 +26,20 @@ public class PlayerScript : MonoBehaviour
 
     private void Start()
     {
+        // Try to find spawn point in scene
+        GameObject spawnPointObject = GameObject.FindWithTag("spawnpoint");
+        if (spawnPointObject != null)
+        {
+            spawnPosition = spawnPointObject.transform.position;
+            spawnRotation = spawnPointObject.transform.rotation;
+        }
+        else
+        {
+            // Fall back to current player position
+            spawnPosition = transform.position;
+            spawnRotation = transform.rotation;
+        }
+
         SetHealth(Health);
     }
 
@@ -32,62 +53,85 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigger entered with: " + other.gameObject.name + " | tag=" + other.tag);
+        if (other.CompareTag("exit"))
+        {
+            if (hasReachedExit)
+            {
+                return;
+            }
+
+            hasReachedExit = true;
+
+            if (uiManager == null)
+            {
+                uiManager = FindFirstObjectByType<UIManager>();
+            }
+
+            if (uiManager != null)
+            {
+                uiManager.ShowFinalResults();
+            }
+
+            return;
+        }
 
         if (other.CompareTag("healing"))
         {
             Healing healing = other.GetComponent<Healing>();
             if (healing == null)
             {
-                Debug.LogWarning("Healing object is missing Healing on: " + other.gameObject.name);
                 return;
             }
 
-            if (healing.HealPlayer(this))
-            {
-                Debug.Log("Player healed. Current health: " + Health);
-            }
+            healing.HealPlayer(this);
 
             Destroy(other.gameObject);
         }
-        else if (other.CompareTag("damage"))
+        else
         {
             Damage damage = other.GetComponent<Damage>();
-            if (damage == null)
+            if (damage != null)
             {
-                Debug.LogWarning("Damage object is missing Damage on: " + other.gameObject.name);
-                return;
-            }
-
-            if (damage.DamagePlayerPeriodic(this))
-            {
-                Debug.Log("Player damaged. Current health: " + Health);
+                damage.DamagePlayerPeriodic(this);
             }
         }
-        else if (other.CompareTag("battery"))
-        {
-            Debug.Log("Battery collected.");
 
+        if (other.CompareTag("battery"))
+        {
             if (uiManager != null)
             {
                 uiManager.UpdateBattery(1);
+                uiManager.RegisterInteraction();
             }
 
+            PlayPickupAudio();
+
+            Destroy(other.gameObject);
+        }
+
+        if (other.CompareTag("secretorb"))
+        {
+            if (uiManager == null)
+            {
+                uiManager = FindFirstObjectByType<UIManager>();
+            }
+
+            if (uiManager != null)
+            {
+                uiManager.RegisterSecretOrb();
+            }
+
+            PlayPickupAudio();
             Destroy(other.gameObject);
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (!other.CompareTag("damage")) return;
-
         Damage damage = other.GetComponent<Damage>();
         if (damage == null) return;
 
-        if (damage.DamagePlayerPeriodic(this))
-        {
-            Debug.Log("Player damaged. Current health: " + Health);
-        }
+        damage.DamagePlayerPeriodic(this);
     }
 
     public void RefreshHealthUI()
@@ -111,14 +155,29 @@ public class PlayerScript : MonoBehaviour
 
         Health = clampedHealth;
         RefreshHealthUI();
-        UpdateGameoverState();
 
         if (didReachZero)
         {
-            Debug.Log("Player died.");
+            HandleDeath();
         }
 
         return didChange;
+    }
+
+    private void HandleDeath()
+    {
+        Deaths++;
+
+        if (uiManager == null)
+        {
+            uiManager = FindFirstObjectByType<UIManager>();
+        }
+
+        if (uiManager != null)
+        {
+            uiManager.RegisterDeath();
+            uiManager.ToggleGameoverScreen(true);
+        }
     }
 
     public bool SetMaxHealth(int newMaxHealth)
@@ -135,7 +194,6 @@ public class PlayerScript : MonoBehaviour
         }
 
         RefreshHealthUI();
-        UpdateGameoverState();
 
         return didChange;
     }
@@ -145,16 +203,43 @@ public class PlayerScript : MonoBehaviour
         return SetHealth(Health + delta);
     }
 
-    private void UpdateGameoverState()
+    public void PlayPickupAudio()
     {
+        if (pickupAudioSource == null || pickupAudioClip == null)
+        {
+            return;
+        }
+
+        pickupAudioSource.PlayOneShot(pickupAudioClip);
+    }
+
+
+
+    public void Respawn()
+    {
+        StartCoroutine(RespawnCoroutine());
+    }
+
+    private System.Collections.IEnumerator RespawnCoroutine()
+    {
+        // Wait for end of frame so First Person Controller doesn't override position
+        yield return new WaitForEndOfFrame();
+
+        transform.position = spawnPosition;
+        transform.rotation = spawnRotation;
+        
+        Health = MaxHealth;
+        RefreshHealthUI();
+
         if (uiManager == null)
         {
             uiManager = FindFirstObjectByType<UIManager>();
         }
 
-        if (uiManager == null) return;
-
-        uiManager.ToggleGameoverScreen(Health <= 0);
+        if (uiManager != null)
+        {
+            uiManager.ToggleGameoverScreen(false);
+        }
     }
 
 }

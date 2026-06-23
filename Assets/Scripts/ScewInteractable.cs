@@ -35,12 +35,7 @@ public class ScewInteractable : MonoBehaviour, IInteractable
 
             if (uiMessage != null)
             {
-                Debug.Log("Screwdriver required message shown.");
                 uiMessage.ShowScrewdriverRequiredMessage();
-            }
-            else
-            {
-                Debug.LogWarning("ScewInteractable could not find UIMessage reference.");
             }
 
             return;

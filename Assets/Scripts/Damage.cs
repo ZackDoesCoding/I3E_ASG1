@@ -35,9 +35,15 @@ public class Damage : MonoBehaviour
         }
     }
 
+    private bool IsImmuneToDamage(PlayerScript playerScript)
+    {
+        return playerScript != null && playerScript.GasMask && gameObject.CompareTag("poison");
+    }
+
     public bool DamagePlayer(PlayerScript playerScript)
     {
         if (playerScript == null) return false;
+        if (IsImmuneToDamage(playerScript)) return false;
 
         int damageAmount = Mathf.Max(0, GetDamageAmount(playerScript));
         return playerScript.ChangeHealth(-damageAmount);
@@ -46,6 +52,7 @@ public class Damage : MonoBehaviour
     public bool DamagePlayerPeriodic(PlayerScript playerScript)
     {
         if (playerScript == null || playerScript.Health <= 0) return false;
+        if (IsImmuneToDamage(playerScript)) return false;
 
         int playerId = playerScript.GetInstanceID();
         float now = Time.time;

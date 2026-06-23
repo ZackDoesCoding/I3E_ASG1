@@ -12,12 +12,19 @@ public class LeverInteractable : MonoBehaviour, IInteractable
     public DoorInteractable linkedDoor;
     public LeverType leverType = LeverType.Red;
     public bool On;
+    public AudioSource leverAudioSource;
+    public AudioClip leverToggleClip;
 
     private void Awake()
     {
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
+        }
+
+        if (leverAudioSource == null)
+        {
+            leverAudioSource = GetComponent<AudioSource>();
         }
 
         if (animator != null)
@@ -31,6 +38,23 @@ public class LeverInteractable : MonoBehaviour, IInteractable
     public void Interact(PlayerScript player)
     {
         ToggleLever();
+
+        if (player == null)
+        {
+            return;
+        }
+
+        UIManager uiManager = player.uiManager;
+        if (uiManager == null)
+        {
+            uiManager = FindFirstObjectByType<UIManager>();
+            player.uiManager = uiManager;
+        }
+
+        if (uiManager != null)
+        {
+            uiManager.RegisterInteraction();
+        }
     }
 
     public void TurnOn()
@@ -43,6 +67,8 @@ public class LeverInteractable : MonoBehaviour, IInteractable
         {
             animator.SetBool("On", true);
         }
+
+        PlayLeverAudio();
 
         NotifyDoor();
     }
@@ -57,6 +83,8 @@ public class LeverInteractable : MonoBehaviour, IInteractable
         {
             animator.SetBool("On", false);
         }
+
+        PlayLeverAudio();
 
         NotifyDoor();
     }
@@ -80,5 +108,13 @@ public class LeverInteractable : MonoBehaviour, IInteractable
 
         bool isRedLever = leverType == LeverType.Red;
         linkedDoor.SetLeverState(isRedLever, On);
+    }
+
+    private void PlayLeverAudio()
+    {
+        if (leverAudioSource != null && leverToggleClip != null)
+        {
+            leverAudioSource.PlayOneShot(leverToggleClip);
+        }
     }
 }

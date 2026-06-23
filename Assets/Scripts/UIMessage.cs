@@ -11,10 +11,11 @@ public class UIMessage : MonoBehaviour
     public GameObject ScrewdriverMessage;
     public GameObject DoorLeverMessage1;
     public GameObject DoorLeverMessage2;
+    public GameObject BatteriesCollectedMessage;
     public float messageDuration = 3f;
 
     // Coroutine to handle message display timing
-    private Coroutine hideCoroutine;
+    private Coroutine MessageTimer;
 
     private void HideAllMessages()
     {
@@ -23,6 +24,7 @@ public class UIMessage : MonoBehaviour
         if (ScrewdriverMessage != null) ScrewdriverMessage.SetActive(false);
         if (DoorLeverMessage1 != null) DoorLeverMessage1.SetActive(false);
         if (DoorLeverMessage2 != null) DoorLeverMessage2.SetActive(false);
+        if (BatteriesCollectedMessage != null) BatteriesCollectedMessage.SetActive(false);
     }
 
     private void ShowMessages(params GameObject[] messagesToShow)
@@ -47,12 +49,12 @@ public class UIMessage : MonoBehaviour
             return;
         }
 
-        if (hideCoroutine != null)
+        if (MessageTimer != null)
         {
-            StopCoroutine(hideCoroutine);
+            StopCoroutine(MessageTimer);
         }
 
-        hideCoroutine = StartCoroutine(HideMessageAfterDelay());
+        MessageTimer = StartCoroutine(HideMessageAfterDelay());
     }
 
     private System.Collections.IEnumerator HideMessageAfterDelay()
@@ -65,7 +67,7 @@ public class UIMessage : MonoBehaviour
             MessagePanel.SetActive(false);
         }
 
-        hideCoroutine = null;
+        MessageTimer = null;
     }
 
     public void ShowScrewdriverRequiredMessage()
@@ -88,4 +90,8 @@ public class UIMessage : MonoBehaviour
         ShowMessages(DoorLeverMessage1, DoorLeverMessage2);
     }
 
+    public void ShowBatteriesCollectedMessage()
+    {
+        ShowMessages(BatteriesCollectedMessage);
+    }
 }

@@ -45,28 +45,52 @@ public class PlayerInteract : MonoBehaviour
 
         if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance))
         {
-            Debug.Log($"Raycast hit nothing within {interactDistance} units.");
             return false;
         }
 
         GameObject hitObject = hit.collider.gameObject;
-        Debug.Log($"Raycast hit: {hitObject.name} | tag={hitObject.tag} | layer={LayerMask.LayerToName(hitObject.layer)}");
 
         if (hitObject.CompareTag("screwdriver"))
         {
+            if (playerScript == null) return false;
+
             playerScript.Screwdriver = true;
             Destroy(hitObject);
-            uiManager.ToggleScrewdriverIcon();
-            uiMessage.ShowScrewdriverMessage();
+
+            if (uiManager != null)
+            {
+                uiManager.ToggleScrewdriverIcon();
+                uiManager.RegisterInteraction();
+            }
+
+            if (uiMessage != null)
+            {
+                uiMessage.ShowScrewdriverMessage();
+            }
+
+            playerScript.PlayPickupAudio();
             return true;
         }
 
         if (hitObject.CompareTag("gasmask"))
         {
+            if (playerScript == null) return false;
+
             playerScript.GasMask = true;
             Destroy(hitObject);
-            uiManager.ToggleGasmaskIcon();
-            uiMessage.ShowGasmaskMessage();
+
+            if (uiManager != null)
+            {
+                uiManager.ToggleGasmaskIcon();
+                uiManager.RegisterInteraction();
+            }
+
+            if (uiMessage != null)
+            {
+                uiMessage.ShowGasmaskMessage();
+            }
+
+            playerScript.PlayPickupAudio();
             return true;
         }
 
