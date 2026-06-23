@@ -15,6 +15,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable
     public bool LeverBlue = false;
     public UIManager uiManager;
     public UIMessage uiMessage;
+    public int scoreValue = 10;
     public AudioSource doorAudioSource;
     public AudioClip manualDoorClip;
     public AudioClip leverDoorClip;
@@ -99,7 +100,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable
 
             if (uiManager != null)
             {
-                uiManager.RegisterInteraction();
+                uiManager.RegisterInteraction(scoreValue);
                 hasAwardedDoorScore = true;
             }
         }
@@ -234,4 +235,5 @@ public class DoorInteractable : MonoBehaviour, IInteractable
             CloseDoor();
         }
     }
+
 }

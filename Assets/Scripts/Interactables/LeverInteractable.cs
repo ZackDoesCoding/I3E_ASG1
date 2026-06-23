@@ -12,6 +12,7 @@ public class LeverInteractable : MonoBehaviour, IInteractable
     public DoorInteractable linkedDoor;
     public LeverType leverType = LeverType.Red;
     public bool On;
+    public int scoreValue = 10;
     public AudioSource leverAudioSource;
     public AudioClip leverToggleClip;
 
@@ -53,7 +54,7 @@ public class LeverInteractable : MonoBehaviour, IInteractable
 
         if (uiManager != null)
         {
-            uiManager.RegisterInteraction();
+            uiManager.RegisterInteraction(scoreValue);
         }
     }
 

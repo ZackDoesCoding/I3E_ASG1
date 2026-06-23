@@ -10,6 +10,7 @@ public class Vent : MonoBehaviour
     public AudioSource ventAudioSource;
     public AudioClip ventRemoveClip;
     public UIManager uiManager;
+    public int scoreValue = 10;
 
     private bool isRemoving;
     private bool hasAwardedVentScore;
@@ -74,7 +75,7 @@ public class Vent : MonoBehaviour
 
                 if (uiManager != null)
                 {
-                    uiManager.RegisterInteraction();
+                    uiManager.RegisterInteraction(scoreValue);
                     hasAwardedVentScore = true;
                 }
             }

@@ -48,52 +48,6 @@ public class PlayerInteract : MonoBehaviour
             return false;
         }
 
-        GameObject hitObject = hit.collider.gameObject;
-
-        if (hitObject.CompareTag("screwdriver"))
-        {
-            if (playerScript == null) return false;
-
-            playerScript.Screwdriver = true;
-            Destroy(hitObject);
-
-            if (uiManager != null)
-            {
-                uiManager.ToggleScrewdriverIcon();
-                uiManager.RegisterInteraction();
-            }
-
-            if (uiMessage != null)
-            {
-                uiMessage.ShowScrewdriverMessage();
-            }
-
-            playerScript.PlayPickupAudio();
-            return true;
-        }
-
-        if (hitObject.CompareTag("gasmask"))
-        {
-            if (playerScript == null) return false;
-
-            playerScript.GasMask = true;
-            Destroy(hitObject);
-
-            if (uiManager != null)
-            {
-                uiManager.ToggleGasmaskIcon();
-                uiManager.RegisterInteraction();
-            }
-
-            if (uiMessage != null)
-            {
-                uiMessage.ShowGasmaskMessage();
-            }
-
-            playerScript.PlayPickupAudio();
-            return true;
-        }
-
         IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
         if (interactable == null) return false;
 

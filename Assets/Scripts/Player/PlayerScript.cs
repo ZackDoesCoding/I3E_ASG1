@@ -96,34 +96,6 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("battery"))
-        {
-            if (uiManager != null)
-            {
-                uiManager.UpdateBattery(1);
-                uiManager.RegisterInteraction();
-            }
-
-            PlayPickupAudio();
-
-            Destroy(other.gameObject);
-        }
-
-        if (other.CompareTag("secretorb"))
-        {
-            if (uiManager == null)
-            {
-                uiManager = FindFirstObjectByType<UIManager>();
-            }
-
-            if (uiManager != null)
-            {
-                uiManager.RegisterSecretOrb();
-            }
-
-            PlayPickupAudio();
-            Destroy(other.gameObject);
-        }
     }
 
     private void OnTriggerStay(Collider other)

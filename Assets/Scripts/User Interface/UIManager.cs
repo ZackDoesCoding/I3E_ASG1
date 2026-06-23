@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     public TMP_Text FinalScoreText;
     public int currentBattery = 0;
     public int totalSecretOrbs = 3;
+    public int secretOrbBonusScore = 100;
+    public int timePenaltyPerMinute = 20;
+    public int deathPenaltyPerDeath = 20;
     public Image HealthFillImage;
     public GameObject MenuPanel;
     public GameObject AdminPanel;
@@ -28,7 +31,7 @@ public class UIManager : MonoBehaviour
 
     private float elapsedSeconds;
     private bool timerRunning = true;
-    private int interactionCount;
+    private int liveScore;
     private int secretOrbsFound;
     private int deathCount;
 
@@ -98,15 +101,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void RegisterInteraction()
+    public void RegisterInteraction(int scoreValue)
     {
-        interactionCount++;
+        liveScore += scoreValue;
         RefreshScoreUI();
     }
 
-    public void RegisterSecretOrb()
+    public void RegisterSecretOrb(int scoreValue)
     {
         secretOrbsFound++;
+        RegisterInteraction(scoreValue);
         RefreshScoreUI();
         
         // Check if all secrets collected
@@ -152,16 +156,14 @@ public class UIManager : MonoBehaviour
 
     public int GetLiveScore()
     {
-        // Live score only counts interactions
-        return interactionCount * 10;
+        return liveScore;
     }
 
     public int GetFinalScore()
     {
-        // Final score includes interactions, orb bonus, time penalty, and death penalty
-        int baseScore = (interactionCount * 10) + (secretOrbsFound * 50);
+        int baseScore = liveScore + (secretOrbsFound * secretOrbBonusScore);
         int minutesTaken = Mathf.FloorToInt(elapsedSeconds / 60f);
-        int finalScore = baseScore - (minutesTaken * 20) - (deathCount * 25);
+        int finalScore = baseScore - (minutesTaken * timePenaltyPerMinute) - (deathCount * deathPenaltyPerDeath);
         return Mathf.Max(0, finalScore);
     }
 
@@ -201,7 +203,6 @@ public class UIManager : MonoBehaviour
     {
         if (ScoreText != null)
         {
-            // Live score excludes time penalty by design.
             ScoreText.text = "Score : " + GetLiveScore();
         }
     }
@@ -256,6 +257,19 @@ public class UIManager : MonoBehaviour
     public void ToggleGameoverScreen(bool isGameover)
     {
         if (GameoverScreen == null) return;
+
+        if (isGameover)
+        {
+            if (MenuPanel != null)
+            {
+                MenuPanel.SetActive(false);
+            }
+
+            if (AdminPanel != null)
+            {
+                AdminPanel.SetActive(false);
+            }
+        }
 
         GameoverScreen.SetActive(isGameover);
         ApplyInputAndCursorState();
