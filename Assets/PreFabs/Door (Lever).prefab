@@ -1435,7 +1435,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9078310914861656780}
   - component: {fileID: 2499052840504759696}
-  - component: {fileID: 4958738507343420896}
   m_Layer: 0
   m_Name: Door (Lever)
   m_TagString: Untagged
@@ -1557,25 +1556,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &4958738507343420896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7101089389280163814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eadef2b45464aa4428b1a6d25dee5546, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
-  animator: {fileID: 5747379727576654609}
-  doorState: 1
-  LeverRed: 0
-  LeverBlue: 0
-  uiManager: {fileID: 0}
-  uiMessage: {fileID: 0}
-  doorAudioSource: {fileID: 2499052840504759696}
-  manualDoorClip: {fileID: 8300000, guid: 01bc11b37ec61ba4cbeb52ba689c724a, type: 3}
-  leverDoorClip: {fileID: 0}
-  generatorDoorClip: {fileID: 0}

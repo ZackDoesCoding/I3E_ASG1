@@ -112,6 +112,11 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			if (_controller == null || !_controller.enabled)
+			{
+				return;
+			}
+
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
@@ -119,6 +124,11 @@ namespace StarterAssets
 
 		private void LateUpdate()
 		{
+			if (_controller == null || !_controller.enabled)
+			{
+				return;
+			}
+
 			CameraRotation();
 		}
 

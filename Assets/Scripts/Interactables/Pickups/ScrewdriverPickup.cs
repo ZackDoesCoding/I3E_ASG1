@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GasmaskPickup : MonoBehaviour, IInteractable
+public class ScrewdriverPickup : MonoBehaviour, IInteractable
 {
     public int scoreValue = 10;
     public UIMessage uiMessage;
@@ -9,14 +9,17 @@ public class GasmaskPickup : MonoBehaviour, IInteractable
 
     public void Interact(PlayerScript player)
     {
+        // Prevent duplicate pickup handling and invalid interactions
         if (hasCollected || player == null)
         {
             return;
         }
 
+        // Apply pickup state on player
         hasCollected = true;
-        player.GasMask = true;
+        player.Screwdriver = true;
 
+        // Resolve UI manager from player or scene if missing
         UIManager uiManager = player.uiManager;
         if (uiManager == null)
         {
@@ -24,12 +27,14 @@ public class GasmaskPickup : MonoBehaviour, IInteractable
             player.uiManager = uiManager;
         }
 
+        // Update UI icon and add interaction score
         if (uiManager != null)
         {
-            uiManager.ToggleGasmaskIcon();
+            uiManager.ToggleScrewdriverIcon();
             uiManager.RegisterInteraction(scoreValue);
         }
 
+        // Resolve message source if not set in inspector
         if (uiMessage == null)
         {
             PlayerInteract playerInteract = player.GetComponent<PlayerInteract>();
@@ -39,11 +44,13 @@ public class GasmaskPickup : MonoBehaviour, IInteractable
             }
         }
 
+        // Show pickup hint to player
         if (uiMessage != null)
         {
-            uiMessage.ShowGasmaskMessage();
+            uiMessage.ShowScrewdriverMessage();
         }
 
+        // Play pickup feedback and remove object from scene
         player.PlayPickupAudio();
         Destroy(gameObject);
     }
